@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="https://thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transaction Details - Employee Management System</title>
+  <link rel="stylesheet" href="styles.css"> <!-- Link to external CSS file -->
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(to bottom, #eaeaea, #f4f4f4);
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 50px auto;
+      padding: 20px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      border: 1px solid #ddd;
+      overflow: hidden; /* Prevent overflow */
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+      font-size: 2.5rem;
+    }
+    h2 {
+      color: #007bff; /* Bootstrap primary color */
+      margin: 10px 0;
+      font-size: 1.5rem;
+      text-align: center;
+    }
+    hr {
+      border: 0;
+      height: 1px;
+      background: #ddd;
+      margin: 20px 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      table-layout: fixed; /* Fixed layout for better control */
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: left;
+      word-wrap: break-word; /* Wraps long text */
+      max-width: 100px; /* Limit the maximum width of each cell */
+      overflow: hidden; /* Hide overflow text */
+      text-overflow: ellipsis; /* Add ellipsis for overflowing text */
+    }
+    th {
+      background-color: #f2f2f2; /* Light gray */
+      color: #333;
+      font-weight: bold;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9; /* Alternate row color */
+    }
+    tr:hover {
+      background-color: #e9ecef; /* Bootstrap light color on hover */
+    }
+    .menu-link {
+      display: block;
+      text-align: center;
+      margin-top: 20px;
+      text-decoration: none;
+      color: white;
+      background-color: #5bc0de; /* Bootstrap info color */
+      padding: 10px;
+      border-radius: 5px;
+      transition: background-color 0.3s, transform 0.3s;
+    }
+    .menu-link:hover {
+      background-color: #31b0d5;
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Employee Management System</h1>
+  <hr>
+  <h2 th:text="'Welcome ' + ${session.firstName} + '!'"></h2>
+  <hr>
+  <h2>Transaction Details</h2>
+  <hr>
+  <table>
+    <tr>
+      <th>Transaction ID</th>
+      <th>Card ID</th>
+      <th>Start Destination</th>
+      <th>End Destination</th>
+      <th>Swipe In Time</th>
+      <th>Swipe Out Time</th>
+      <th>Fee</th>
+      <th>Balance Before</th>
+      <th>Balance After</th>
+    </tr>
+    <tr th:each="transaction : ${transactions}">
+      <td th:text="${transaction.transId}"></td>
+      <td th:text="${transaction.userId}"></td>
+      <td th:text="${transaction.startStation}"></td>
+      <td th:text="${transaction.destStation}"></td>
+      <td th:text="${transaction.swipeInTime}"></td>
+      <td th:text="${transaction.swipeOutTime}"></td>
+      <td th:text="${transaction.fee}"></td>
+      <td th:text="${transaction.balanceBefore}"></td>
+      <td th:text="${transaction.balanceAfter}"></td>
+    </tr>
+  </table>
+  <a class="menu-link" href="./menu">Go To Menu Page</a>
+</div>
+</body>
+</html>

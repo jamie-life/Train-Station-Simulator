@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="https://thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Metro Station</title>
+  <link rel="stylesheet" href="styles.css"> <!-- Link to external CSS file -->
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(to bottom, #eaeaea, #f4f4f4);
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 700px;
+      margin: 50px auto;
+      padding: 20px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      border: 1px solid #ddd;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+      font-size: 2.5rem;
+    }
+    h2 {
+      color: #007bff; /* Bootstrap primary color */
+      margin: 10px 0;
+      font-size: 1.5rem;
+    }
+    .balance {
+      text-align: right;
+      font-weight: bold;
+      color: #555;
+    }
+    .nav-button {
+      display: block;
+      margin: 15px 0;
+      padding: 15px;
+      text-decoration: none;
+      color: white;
+      background-color: #007bff; /* Bootstrap primary color */
+      border-radius: 5px;
+      text-align: center;
+      transition: background-color 0.3s, transform 0.3s;
+      font-size: 1.1rem;
+    }
+    .nav-button:hover {
+      background-color: #0056b3;
+      transform: translateY(-2px);
+    }
+    .sign-out-btn {
+      width: 100%;
+      padding: 15px;
+      margin: 20px 0;
+      border: none;
+      border-radius: 5px;
+      background-color: #d9534f; /* Bootstrap danger color */
+      color: white;
+      cursor: pointer;
+      font-size: 1.2rem;
+      transition: background-color 0.3s, transform 0.3s;
+    }
+    .sign-out-btn:hover {
+      background-color: #c9302c;
+      transform: translateY(-2px);
+    }
+    .footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.9rem;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Metro Station</h1>
+  <hr>
+  <h2 th:text="'Welcome ' + ${session.firstName} + '!'"></h2>
+  <h2 class="balance" th:text="'Your Account Balance is: ' + ${session.balance}"></h2>
+  <hr>
+  <a class="nav-button" href="./train-booking">Commence Journey</a>
+  <a class="nav-button" href="./add-funds">Add Funds</a>
+  <a class="nav-button" href="./transactions-history">Show Transactions</a>
+  <button class="sign-out-btn" onClick="location.href='./login'">Sign Out</button>
+  <div class="footer">
+    &copy; 2024 Metro Station. All rights reserved.
+  </div>
+</div>
+</body>
+</html>

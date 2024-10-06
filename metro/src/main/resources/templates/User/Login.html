@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="https://thymeleaf.org">
+<head>
+  <meta charset="ISO-8859-1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - The Metro Station</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: #fff;
+    }
+
+    .login-container {
+      background-color: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+      text-align: center;
+      width: 100%;
+      max-width: 360px;
+    }
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 30px;
+      letter-spacing: 1px;
+      font-weight: 500;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    input[type="text"], input[type="password"] {
+      padding: 15px;
+      font-size: 16px;
+      background-color: rgba(255, 255, 255, 0.2);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      outline: none;
+      transition: background-color 0.3s ease;
+    }
+
+    input[type="text"]::placeholder, input[type="password"]::placeholder {
+      color: #ddd;
+    }
+
+    input[type="text"]:focus, input[type="password"]:focus {
+      background-color: rgba(255, 255, 255, 0.4);
+    }
+
+    input[type="submit"], input[type="button"] {
+      padding: 15px;
+      font-size: 16px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    input[type="submit"]:hover, input[type="button"]:hover {
+      background-color: #43a047;
+      transform: translateY(-2px);
+    }
+
+    .sign-up-btn {
+      background-color: #008CBA;
+    }
+
+    .sign-up-btn:hover {
+      background-color: #007bb5;
+    }
+
+    p {
+      color: red;
+      font-size: 14px;
+      margin-top: 20px;
+    }
+
+    .credits {
+      position: absolute;
+      bottom: 20px;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.6);
+    }
+  </style>
+</head>
+<body>
+
+<div class="login-container">
+  <h1>Welcome to The Metro Station</h1>
+  <form method="post" th:object="${user}" >
+    <input type="text" th:field="*{username}" placeholder="Enter Username">
+    <input type="password" th:field="*{password}" placeholder="Enter Password">
+    <input type="submit" value="Login">
+    <input type="button" onClick="location.href='./signUp'" value='Sign Up' class="sign-up-btn">
+  </form>
+  <p th:text="${message}"></p>
+</div>
+
+<div class="credits">Jamie Grant</div>
+
+</body>
+</html>

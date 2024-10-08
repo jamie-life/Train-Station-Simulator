@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Transaction Details - Employee Management System</title>
+  <title>Transaction Details - Transactions</title>
   <link rel="stylesheet" href="styles.css"> <!-- Link to external CSS file -->
   <style>
     body {
@@ -13,7 +13,7 @@
       padding: 0;
     }
     .container {
-      max-width: 1000px;
+      max-width: 1500px;
       margin: 50px auto;
       padding: 20px;
       background: white;
@@ -84,9 +84,9 @@
 </head>
 <body>
 <div class="container">
-  <h1>Employee Management System</h1>
+  <h1>Transactions History</h1>
   <hr>
-  <h2 th:text="'Welcome ' + ${session.firstName} + '!'"></h2>
+  <h2 th:text="'Welcome ' + ${session.user.firstName} + '!'"></h2>
   <hr>
   <h2>Transaction Details</h2>
   <hr>
@@ -101,17 +101,19 @@
       <th>Fee</th>
       <th>Balance Before</th>
       <th>Balance After</th>
+      <th>Transaction Time</th>
     </tr>
-    <tr th:each="transaction : ${transactions}">
-      <td th:text="${transaction.transId}"></td>
-      <td th:text="${transaction.userId}"></td>
-      <td th:text="${transaction.startStation}"></td>
-      <td th:text="${transaction.destStation}"></td>
-      <td th:text="${transaction.swipeInTime}"></td>
-      <td th:text="${transaction.swipeOutTime}"></td>
-      <td th:text="${transaction.fee}"></td>
-      <td th:text="${transaction.balanceBefore}"></td>
-      <td th:text="${transaction.balanceAfter}"></td>
+    <tr th:each="transactions : ${transactions}">
+      <td th:text="${transactions.transId}"></td>
+      <td th:text="${transactions.userId}"></td>
+      <td th:text="${transactions.startStation}"></td>
+      <td th:text="${transactions.destStation}"></td>
+      <td th:text="${transactions.swipeInTime}"></td>
+      <td th:text="${transactions.swipeOutTime}"></td>
+      <td th:text="${transactions.fee}"></td>
+      <td th:text="${transactions.balanceBefore}"></td>
+      <td th:text="${transactions.balanceAfter}"></td>
+      <td th:text="${transactions.transTime}"></td>
     </tr>
   </table>
   <a class="menu-link" href="./menu">Go To Menu Page</a>

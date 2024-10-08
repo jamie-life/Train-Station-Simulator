@@ -1,2 +1,4 @@
 
 metro/src/main/resources/application.properties
+login/login/src/main/resources/application.properties
+transcations/transcations/src/main/resources/application.properties

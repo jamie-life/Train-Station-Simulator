@@ -80,8 +80,8 @@
 <div class="container">
   <h1>Metro Station</h1>
   <hr>
-  <h2 th:text="'Welcome ' + ${session.firstName} + '!'"></h2>
-  <h2 class="balance" th:text="'Your Account Balance is: ' + ${session.balance}"></h2>
+  <h2 th:text="'Welcome ' + ${session.user.firstName} + '!'"></h2>
+  <h2 class="balance" th:text="'Your Account Balance is: ' + ${session.user.balance}"></h2>
   <hr>
   <a class="nav-button" href="./train-booking">Commence Journey</a>
   <a class="nav-button" href="./add-funds">Add Funds</a>

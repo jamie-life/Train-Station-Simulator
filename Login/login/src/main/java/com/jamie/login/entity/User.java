@@ -1,5 +1,6 @@
-package com.jamie.metro.entity;
+package com.jamie.login.entity;
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +12,12 @@ import java.util.List;
 @NoArgsConstructor
 @Setter
 @Getter
+@Entity
+@Table(name = "Users")
 public class User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
     private String firstName;
@@ -26,4 +32,8 @@ public class User {
 
     private double balance;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Transactions> transactions;
+
 }
+

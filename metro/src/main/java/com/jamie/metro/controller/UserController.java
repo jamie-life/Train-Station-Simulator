@@ -2,6 +2,7 @@ package com.jamie.metro.controller;
 
 import com.jamie.metro.dto.LoginDto;
 import com.jamie.metro.entity.Station;
+import com.jamie.metro.entity.TransactionType;
 import com.jamie.metro.entity.Transactions;
 import com.jamie.metro.entity.User;
 import jakarta.servlet.http.HttpSession;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -67,21 +69,21 @@ public class UserController {
         // Create a new instance here
 
         // Examples, username, first name and last name would be returned with jwt and balance
-        String firstName = "Jamie";
-        String lastName = "Grant";
-        double balance = 100.0;
+
+        User saveUser = new User(
+                1L,
+                "Jamie",
+                "Grant",
+                "Jamie",
+                "JamieGrant@outlook.com",
+                "Test",
+                10
 
 
-        // Add logic to check the login credentials, set session attributes, etc.
-        session.setAttribute("firstName", firstName);
-        session.setAttribute("lastName", lastName);
-        session.setAttribute("username", user.getUsername());
-        session.setAttribute("balance", balance);
+        );
 
-        System.out.println("Username: " + user.getUsername()
-                + ". First Name: " + firstName
-                + ". Last Name: " + lastName
-                + ". Balance" + balance);
+        System.out.println(saveUser);
+        session.setAttribute("user", saveUser);
 
         return "redirect:menu";
     }
@@ -111,16 +113,18 @@ public class UserController {
 
         Collection<Transactions> transactionsList = new ArrayList<>();
         transactionsList.add(new Transactions(
-                1,
-                123,
+                1L,
+                user.getUserId(),
+                TransactionType.FARE,
                 1,
                 2,
-                new Timestamp(System.currentTimeMillis()),
-                new Timestamp(System.currentTimeMillis()),
-                5,
-                20,
-                15
-        ));
+                LocalDateTime.now(),
+                LocalDateTime.now(),
+                5.0,
+                10.0,
+                5.0,
+                LocalDateTime.now()
+                ));
 
 
         modelAndView.addObject("transactions", transactionsList);

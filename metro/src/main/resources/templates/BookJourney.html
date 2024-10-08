@@ -98,8 +98,8 @@
 <body>
 <div class="container">
   <h1>Metro Station</h1>
-  <h2 th:text="'Welcome ' + ${session.firstName} + '!'"></h2>
-  <h2 class="balance" th:text="'Your Account Balance is: ' + ${session.balance}"></h2>
+  <h2 th:text="'Welcome ' + ${session.user.firstName} + '!'"></h2>
+  <h2 class="balance" th:text="'Your Account Balance is: ' + ${session.user.balance}"></h2>
 
   <form th:object="${stations}" method="post">
     <label for="startStation">Enter Current Station:</label>

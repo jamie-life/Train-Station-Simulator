@@ -1,8 +1,8 @@
 package com.jamie.authentication.controller;
 
-import dto.RegisterDto;
+import com.jamie.authentication.dto.RegisterDto;
+import com.jamie.authentication.service.AuthenticationService;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,16 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("api/auth")
 public class AuthenticationController {
 
+    private AuthenticationService authenticationService;
+
     // Register REST API
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegisterDto registerDto) {
-        String response = "Testing";
-        System.out.println("Username: " + registerDto.getUsername());
-        System.out.println("First Name: " + registerDto.getFirstName());
-        System.out.println("Last Name: " + registerDto.getLastName());;
-        System.out.println("Email: " + registerDto.getEmail());
-        System.out.println("Password: " + registerDto.getPassword());
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return authenticationService.register(registerDto);
     }
 
 }

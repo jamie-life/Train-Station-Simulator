@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up - The Metro Station</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Link to external CSS file -->
+    <link rel="stylesheet" href="styles.css">
     <style>
+        /* Add your styles here */
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
@@ -73,7 +74,7 @@
         <input type="submit" value="Sign Up">
         <input type="button" onClick="location.href='./'" value="Back">
     </form>
-    <p th:text="${message}" class="error-message"></p>
+    <p th:if="${message}" th:text="${message}" class="error-message"></p>
 </div>
 </body>
 </html>

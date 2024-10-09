@@ -10,13 +10,10 @@ import com.jamie.metro.service.AuthenticationService;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,14 +43,23 @@ public class UserController {
     }
 
     // Check For Submit / Sign Up Check
-    @RequestMapping(value = "signUp", method = RequestMethod.POST)
-    public String registerCheck(@ModelAttribute("user") RegisterDto user, HttpSession session) {
-
-        // Passing the Register DTO of User To Service
+    @PostMapping("signUp")
+    public String registerCheck(@ModelAttribute("user") RegisterDto user, RedirectAttributes redirectAttributes) {
+        // Handle the registration logic
         String response = authenticationService.register(user);
         System.out.println(response);
 
-        return "redirect:login";
+        // Check for errors
+        if (response.startsWith("Error:")) {
+            // Pass the error message as a flash attribute
+            redirectAttributes.addFlashAttribute("message", response);
+            // Redirect back to the sign-up page
+            return "redirect:signUp";
+        }
+
+        // Redirect to login on success
+        redirectAttributes.addFlashAttribute("message", response);
+        return "redirect:/login"; // Adjust this to match your login URL
     }
 
     // Login Section
@@ -63,7 +69,7 @@ public class UserController {
     }
 
     // Check For Submit / Login Check
-    @RequestMapping(value = "login", method = RequestMethod.POST)
+    @PostMapping("login")
     public String loginCheck(@ModelAttribute("user") LoginDto user, HttpSession session) {
         System.out.println("Username: " + user.getUsername() + ". Password: " + user.getPassword());
 

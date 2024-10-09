@@ -112,7 +112,7 @@
     <input type="submit" value="Login">
     <input type="button" onClick="location.href='./signUp'" value='Sign Up' class="sign-up-btn">
   </form>
-  <p th:text="${message}"></p>
+  <p th:if="${message}" th:text="${message}" class="success-message"></p>
 </div>
 
 <div class="credits">Jamie Grant</div>

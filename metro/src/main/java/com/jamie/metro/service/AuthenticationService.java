@@ -5,5 +5,5 @@ import com.jamie.metro.dto.RegisterDto;
 
 public interface AuthenticationService {
     String register (RegisterDto registerDto);
-    String login(LoginDto registerDto);
+    String login (LoginDto registerDto);
 }

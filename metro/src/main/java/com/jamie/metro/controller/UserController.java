@@ -2,6 +2,7 @@ package com.jamie.metro.controller;
 
 import com.jamie.metro.dto.LoginDto;
 import com.jamie.metro.dto.RegisterDto;
+import com.jamie.metro.dto.UserDto;
 import com.jamie.metro.entity.Station;
 import com.jamie.metro.entity.TransactionType;
 import com.jamie.metro.entity.Transactions;
@@ -70,28 +71,22 @@ public class UserController {
 
     // Check For Submit / Login Check
     @PostMapping("login")
-    public String loginCheck(@ModelAttribute("user") LoginDto user, HttpSession session) {
-        System.out.println("Username: " + user.getUsername() + ". Password: " + user.getPassword());
-
-        // Create a new instance here
-
-        // Examples, username, first name and last name would be returned with jwt and balance
-
-        User saveUser = new User(
-                1L,
-                "Jamie",
-                "Grant",
-                "Jamie",
-                "JamieGrant@outlook.com",
-                "Test",
-                10
+    public String loginCheck(@ModelAttribute("user") LoginDto user, RedirectAttributes redirectAttributes, HttpSession session) {
+        String response = authenticationService.login(user);
+        System.out.println(response);
 
 
-        );
 
-        System.out.println(saveUser);
+        // Check for errors
+        if (response.startsWith("Error:")) {
+            // Pass the error message as a flash attribute
+            redirectAttributes.addFlashAttribute("message", response);
+            // Redirect back to the sign-up page
+            return "redirect:login";
+        }
+
+        UserDto saveUser = authenticationService.getUser(user.getUsername()).getBody();
         session.setAttribute("user", saveUser);
-
         return "redirect:menu";
     }
 

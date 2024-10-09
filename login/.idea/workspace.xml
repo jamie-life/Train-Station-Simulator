@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="9116a979-4b11-48d3-8fc5-db690e6b7b22" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/../user-authentication/user-authentication/src/main/java/com/jamie/authentication/controller/AuthenticationController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../user-authentication/user-authentication/src/main/java/com/jamie/authentication/entity/TransactionType.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../user-authentication/user-authentication/src/main/java/com/jamie/authentication/entity/Transactions.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../user-authentication/user-authentication/src/main/java/com/jamie/authentication/entity/User.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../user-authentication/user-authentication/src/main/java/dto/RegisterDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/login/src/main/java/com/jamie/login/entity/TransactionType.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/login/src/main/java/com/jamie/login/entity/Transactions.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/login/src/main/java/com/jamie/login/entity/User.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../user-authentication/.idea/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../user-authentication/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../user-authentication/.idea/encodings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../user-authentication/.idea/jarRepositories.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/login.iml" beforeDir="false" afterPath="$PROJECT_DIR$/../user-authentication/.idea/login.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../user-authentication/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../user-authentication/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../user-authentication/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/login/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../user-authentication/user-authentication/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/login/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/../user-authentication/user-authentication/.mvn/wrapper/maven-wrapper.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/login/mvnw" beforeDir="false" afterPath="$PROJECT_DIR$/../user-authentication/user-authentication/mvnw" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/login/mvnw.cmd" beforeDir="false" afterPath="$PROJECT_DIR$/../user-authentication/user-authentication/mvnw.cmd" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/login/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../user-authentication/user-authentication/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/login/src/main/java/com/jamie/login/LoginRestApiApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/../user-authentication/user-authentication/src/main/java/com/jamie/authentication/UserAuthenticationApiApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/login/src/test/java/com/jamie/login/LoginRestApiApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/../user-authentication/user-authentication/src/test/java/com/jamie/authentication/UserAuthenticationApiApplicationTests.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Enum" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$/.." value="master" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;jamie-life&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/jamie-life/Train-Station-Simulator.git&quot;,
+    &quot;accountId&quot;: &quot;20f626b7-a94f-40f5-8096-e8d9c8f5521c&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 4
+}</component>
+  <component name="ProjectId" id="2n6WDqesFXrYr1aLja2KC2KljSQ" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "Spring Boot.LoginRestApiApplication.executor": "Run",
+    "git-widget-placeholder": "login-api",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/Jamie/OneDrive/Documents/Computer Science/Coding/Training/Wiley Edge/WIley Project/Train Station Simulator",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "reference.settings.project.maven.importing",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RunManager">
+    <configuration default="true" type="GroovyScriptRunConfiguration" factoryName="Groovy">
+      <setting name="path" value="" />
+      <setting name="vmparams" value="" />
+      <setting name="params" value="" />
+      <setting name="workDir" value="file://$PROJECT_DIR$" />
+      <setting name="debug" value="false" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="UserAuthenticationApiApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="login" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.jamie.authentication.UserAuthenticationApiApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-28b599e66164-intellij.indexing.shared.core-IU-242.23339.11" />
+        <option value="bundled-js-predefined-d6986cc7102b-5c90d61e3bab-JavaScript-IU-242.23339.11" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="9116a979-4b11-48d3-8fc5-db690e6b7b22" name="Changes" comment="" />
+      <created>1728293888676</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1728293888676</updated>
+      <workItem from="1728293889716" duration="52000" />
+      <workItem from="1728293967365" duration="608000" />
+      <workItem from="1728297096150" duration="7000" />
+      <workItem from="1728297111305" duration="20000" />
+      <workItem from="1728301613978" duration="1193000" />
+      <workItem from="1728302922086" duration="793000" />
+      <workItem from="1728329363186" duration="2114000" />
+      <workItem from="1728411224713" duration="3391000" />
+      <workItem from="1728416276114" duration="49000" />
+      <workItem from="1728416361220" duration="1353000" />
+      <workItem from="1728419450696" duration="133000" />
+      <workItem from="1728464532034" duration="169000" />
+      <workItem from="1728469097796" duration="1105000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>

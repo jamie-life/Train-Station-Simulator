@@ -11,7 +11,7 @@
 	<groupId>com.jamie</groupId>
 	<artifactId>login</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Login Rest API</name>
+	<name>User Authentication Rest API</name>
 	<description>Login API for Train Station Simulator</description>
 	<url/>
 	<licenses>

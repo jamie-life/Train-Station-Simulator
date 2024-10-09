@@ -1,10 +1,10 @@
-package com.jamie.login;
+package com.jamie.authentication;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class LoginRestApiApplicationTests {
+class UserAuthenticationApiApplicationTests {
 
 	@Test
 	void contextLoads() {

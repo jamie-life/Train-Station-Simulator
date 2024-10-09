@@ -2,3 +2,4 @@
 metro/src/main/resources/application.properties
 login/login/src/main/resources/application.properties
 transcations/transcations/src/main/resources/application.properties
+user-authentication/src/main/resources/application.properties

@@ -1,4 +1,4 @@
-package com.jamie.metro.entity;
+package com.jamie.metro.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,9 +9,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Setter
 @Getter
-public class User {
-    private Long userId;
-
+public class RegisterDto {
     private String firstName;
 
     private String lastName;
@@ -21,7 +19,4 @@ public class User {
     private String email;
 
     private String password;
-
-    private double balance;
-
 }

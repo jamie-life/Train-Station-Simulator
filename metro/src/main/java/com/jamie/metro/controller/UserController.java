@@ -1,11 +1,14 @@
 package com.jamie.metro.controller;
 
 import com.jamie.metro.dto.LoginDto;
+import com.jamie.metro.dto.RegisterDto;
 import com.jamie.metro.entity.Station;
 import com.jamie.metro.entity.TransactionType;
 import com.jamie.metro.entity.Transactions;
 import com.jamie.metro.entity.User;
+import com.jamie.metro.service.AuthenticationService;
 import jakarta.servlet.http.HttpSession;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -20,8 +23,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+@AllArgsConstructor
 @Controller
 public class UserController {
+
+    private AuthenticationService authenticationService;
 
     @ModelAttribute("stationNames")
     List<String> getStations(){
@@ -36,21 +42,16 @@ public class UserController {
     // Sign Up Section
     @RequestMapping("signUp")
     public ModelAndView getSignUpPage() {
-        return new ModelAndView("User/SignUp", "user", new User());
+        return new ModelAndView("User/SignUp", "user", new RegisterDto());
     }
 
     // Check For Submit / Sign Up Check
     @RequestMapping(value = "signUp", method = RequestMethod.POST)
-    public String registerCheck(@ModelAttribute("user") User user, HttpSession session) {
-        System.out.println("Username: " + user.getUsername()
-                + ". Password: " + user.getPassword()
-                + ". Email: " + user.getEmail()
-                + ". First Name: " + user.getFirstName()
-                + ". Last Name: " + user.getLastName());
+    public String registerCheck(@ModelAttribute("user") RegisterDto user, HttpSession session) {
 
-        // Create a new instance here
-
-        // Add logic to check the login credentials, set session attributes, etc.
+        // Passing the Register DTO of User To Service
+        String response = authenticationService.register(user);
+        System.out.println(response);
 
         return "redirect:login";
     }

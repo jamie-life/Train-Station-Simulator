@@ -10,4 +10,5 @@ public interface AuthenticationService {
     ResponseEntity<String> register (RegisterDto registerDto);
     ResponseEntity<String> login (LoginDto loginDto);
     ResponseEntity<UserDto> getUser (String username);
+    ResponseEntity<Double> topUpBalance (Long id, Double topUp);
 }

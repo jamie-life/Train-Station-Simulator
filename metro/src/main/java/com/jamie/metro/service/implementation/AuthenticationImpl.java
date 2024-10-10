@@ -1,5 +1,6 @@
 package com.jamie.metro.service.implementation;
 
+import com.jamie.metro.dto.BalanceUpdateRequestDto;
 import com.jamie.metro.dto.LoginDto;
 import com.jamie.metro.dto.RegisterDto;
 import com.jamie.metro.dto.UserDto;
@@ -133,5 +134,55 @@ public class AuthenticationImpl implements AuthenticationService {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @Override
+    public double addBalance(Long userId, Double topUp) {
+        // API URL
+        String apiUrl = "http://localhost:8082/api/user/add-funds";
+
+        // Set headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        // Create the request body with userId and topUp
+        BalanceUpdateRequestDto requestBody = new BalanceUpdateRequestDto(userId, topUp);
+
+        // Create the request entity with the DTO and headers
+        HttpEntity<BalanceUpdateRequestDto> requestEntity = new HttpEntity<>(requestBody, headers);
+
+        try {
+            // Send POST request and receive response
+            ResponseEntity<Double> response = restTemplate.exchange(
+                    apiUrl,
+                    HttpMethod.POST,
+                    requestEntity,
+                    Double.class // The response type is Double.class
+            );
+
+            // Check if the response is successful (HTTP 200 OK)
+            if (response.getStatusCode() == HttpStatus.OK) {
+                // Return the updated balance
+                return response.getBody();
+            }
+
+        } catch (HttpClientErrorException e) {
+            // Handle specific HTTP status errors
+            if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {
+                // Log or throw an exception with relevant details
+                String errorMessage = e.getResponseBodyAsString();
+                throw new TrainException(HttpStatus.BAD_REQUEST, "Bad request: " + errorMessage);
+            }
+
+            // Add more specific status code handling if needed
+
+        } catch (Exception e) {
+            // Log or handle other unexpected errors
+            throw new TrainException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+
+        // If the response was not 201 Created or an exception occurred, handle it
+        throw new TrainException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to update balance.");
+    }
+
 
 }

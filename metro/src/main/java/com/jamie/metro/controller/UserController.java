@@ -11,6 +11,7 @@ import com.jamie.metro.service.AuthenticationService;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -27,6 +28,7 @@ public class UserController {
 
     private AuthenticationService authenticationService;
 
+    // General Section
     @ModelAttribute("stationNames")
     List<String> getStations(){
         return Arrays.asList("Test", "Test2", "Test3", "Test4");
@@ -75,8 +77,6 @@ public class UserController {
         String response = authenticationService.login(user);
         System.out.println(response);
 
-
-
         // Check for errors
         if (response.startsWith("Error:")) {
             // Pass the error message as a flash attribute
@@ -96,14 +96,36 @@ public class UserController {
         return new ModelAndView("Menu");
     }
 
+    // Journey Booking Section
     @RequestMapping("/train-booking")
     public ModelAndView LogJourneyPage() {
         return new ModelAndView("BookJourney", "stations", new Station());
     }
 
+    // Add Funds Section
     @RequestMapping("/add-funds")
     public ModelAndView addFundsPage() {
         return new ModelAndView("AddFunds");
+    }
+
+    // Check For Submit / Sign Up Check
+    @PostMapping("/addFundUser")
+    public String addFundsCheck(@RequestParam("funds") double funds, Model model, HttpSession session) {
+        System.out.println("Funds Selected: " + funds);
+        UserDto user = (UserDto) session.getAttribute("user");
+
+        if (user != null) {
+            // Access the user's ID
+            Long userId = user.getId();  // Assuming the ID is a Long type
+            System.out.println("User ID: " + userId);
+            double newBalance = authenticationService.addBalance(userId, funds);
+            user.setBalance(newBalance);
+            session.setAttribute("user", user);
+
+        } else {
+            System.out.println("No user found in session");
+        }
+        return "/AddFunds";
     }
 
     @RequestMapping("/transactions-history")

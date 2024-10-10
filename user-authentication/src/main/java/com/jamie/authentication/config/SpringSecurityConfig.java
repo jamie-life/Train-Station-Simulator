@@ -37,6 +37,7 @@ public class SpringSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)  // Disable CSRF for testing
                 .authorizeHttpRequests((authorize) -> {
                     authorize.requestMatchers("/api/auth/**").permitAll();
+                    authorize.requestMatchers("/api/user/**").permitAll();
                     authorize.anyRequest().authenticated();
                 }).httpBasic(Customizer.withDefaults());
         return http.build();

@@ -78,4 +78,16 @@ public class AuthenticationImpl implements AuthenticationService {
 
         return new ResponseEntity<>(userDto, HttpStatus.OK);
     }
+
+    @Override
+    public ResponseEntity<Double> topUpBalance(Long id, Double topUp) {
+        User user = userRepository.findById(id).orElse(null);
+        if (user == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND); // Handle the case when the user is not found
+        }
+        user.setBalance(user.getBalance() + topUp);
+        userRepository.save(user);
+
+        return new ResponseEntity<>(user.getBalance(), HttpStatus.OK);
+    }
 }

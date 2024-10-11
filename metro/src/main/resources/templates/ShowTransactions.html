@@ -103,17 +103,17 @@
       <th>Balance After</th>
       <th>Transaction Time</th>
     </tr>
-    <tr th:each="transactions : ${transactions}">
-      <td th:text="${transactions.transId}"></td>
-      <td th:text="${transactions.userId}"></td>
-      <td th:text="${transactions.startStation}"></td>
-      <td th:text="${transactions.destStation}"></td>
-      <td th:text="${transactions.swipeInTime}"></td>
-      <td th:text="${transactions.swipeOutTime}"></td>
-      <td th:text="${transactions.fee}"></td>
-      <td th:text="${transactions.balanceBefore}"></td>
-      <td th:text="${transactions.balanceAfter}"></td>
-      <td th:text="${transactions.transTime}"></td>
+    <tr th:each="transaction : ${transaction}">
+      <td th:text="${transaction.transId}"></td>
+      <td th:text="${transaction.userId}"></td>
+      <td th:text="${transaction.startStation}"></td>
+      <td th:text="${transaction.destStation}"></td>
+      <td th:text="${transaction.swipeInTime}"></td>
+      <td th:text="${transaction.swipeOutTime}"></td>
+      <td th:text="${transaction.fee}"></td>
+      <td th:text="${transaction.balanceBefore}"></td>
+      <td th:text="${transaction.balanceAfter}"></td>
+      <td th:text="${transaction.transTime}"></td>
     </tr>
   </table>
   <a class="menu-link" href="./menu">Go To Menu Page</a>

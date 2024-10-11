@@ -33,7 +33,7 @@ public class User {
     private double balance;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Transactions> transactions;
+    private List<Transaction> transactions;
 
 }
 

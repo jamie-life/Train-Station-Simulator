@@ -1,10 +1,9 @@
 package com.jamie.authentication.controller;
 
-import com.jamie.authentication.dto.BalanceUpdateRequestDto;
-import com.jamie.authentication.dto.RegisterDto;
+import com.jamie.authentication.dto.TransactionFareDto;
+import com.jamie.authentication.dto.TransactionTopUpDto;
 import com.jamie.authentication.service.AuthenticationService;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,8 +16,12 @@ public class UserController {
 
     // Add Funds REST API
     @PostMapping("/add-funds")
-    public ResponseEntity<Double> addFunds(@RequestBody BalanceUpdateRequestDto balanceUpdateRequestDto) {
-        return authenticationService.topUpBalance(balanceUpdateRequestDto.getUserId(),
-                balanceUpdateRequestDto.getTopUp());
+    public ResponseEntity<Double> addFunds(@RequestBody TransactionTopUpDto transactionTopUpDto) {
+        return authenticationService.topUpBalance(transactionTopUpDto);
+    }
+
+    @PostMapping("/add-journey")
+    public ResponseEntity<Double> addJourney(@RequestBody TransactionFareDto transactionFareDto) {
+        return authenticationService.addJourney(transactionFareDto);
     }
 }

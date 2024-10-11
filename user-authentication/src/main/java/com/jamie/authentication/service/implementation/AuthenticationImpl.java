@@ -1,11 +1,13 @@
 package com.jamie.authentication.service.implementation;
 
-import com.jamie.authentication.dto.LoginDto;
-import com.jamie.authentication.dto.RegisterDto;
-import com.jamie.authentication.dto.UserDto;
+import com.jamie.authentication.dto.*;
+import com.jamie.authentication.entity.Transaction;
+import com.jamie.authentication.entity.TransactionType;
 import com.jamie.authentication.entity.User;
+import com.jamie.authentication.repository.TransactionRepository;
 import com.jamie.authentication.repository.UserRepository;
 import com.jamie.authentication.service.AuthenticationService;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,10 +18,16 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+import java.util.List;
+
+import static java.lang.Math.abs;
+
 @Service
 @AllArgsConstructor
 public class AuthenticationImpl implements AuthenticationService {
     private UserRepository userRepository;
+    private TransactionRepository transactionRepository;
     private PasswordEncoder passwordEncoder;
     private AuthenticationManager authenticationManager;
 
@@ -79,15 +87,79 @@ public class AuthenticationImpl implements AuthenticationService {
         return new ResponseEntity<>(userDto, HttpStatus.OK);
     }
 
+    @Transactional
     @Override
-    public ResponseEntity<Double> topUpBalance(Long id, Double topUp) {
-        User user = userRepository.findById(id).orElse(null);
+    public ResponseEntity<Double> topUpBalance(TransactionTopUpDto transactionTopUpDto) {
+
+        // Fetch User by Id and verify it exist.
+        User user = userRepository.findById(transactionTopUpDto.getUserId()).orElse(null);
         if (user == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND); // Handle the case when the user is not found
         }
-        user.setBalance(user.getBalance() + topUp);
+
+        // Update Balance and Assign Values to be save in Transaction database.
+        double currentBalance = user.getBalance();
+        double newBalance = currentBalance + transactionTopUpDto.getTopUp();
+        user.setBalance(newBalance);
+
+        // Build Transaction Object to be saved.
+        Transaction newTransaction = new Transaction();
+        newTransaction.setUser(user);
+        newTransaction.setTransactionType(TransactionType.TOP_UP);
+        newTransaction.setStartStation(null);
+        newTransaction.setDestStation(null);
+        newTransaction.setSwipeInTime(null);
+        newTransaction.setSwipeOutTime(null);
+        newTransaction.setFee(transactionTopUpDto.getTopUp());
+        newTransaction.setBalanceBefore(currentBalance);
+        newTransaction.setBalanceAfter(newBalance);
+        newTransaction.setTransTime(transactionTopUpDto.getTransTime());
+
+        transactionRepository.save(newTransaction);
         userRepository.save(user);
 
         return new ResponseEntity<>(user.getBalance(), HttpStatus.OK);
+    }
+
+    @Transactional
+    @Override
+    public ResponseEntity<Double> addJourney(TransactionFareDto transactionFareDto) {
+        List<String> station = Arrays.asList("Station 1", "Station 2", "Station 3", "Station 4");
+
+        if (station.indexOf(transactionFareDto.getStartStation()) == -1 || station.indexOf(transactionFareDto.getDestStation()) == -1) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        // Fetch User by Id and verify it exist.
+        User user = userRepository.findById(transactionFareDto.getUserId()).orElse(null);
+        if (user == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND); // Handle the case when the user is not found
+        }
+
+        // Calculate Balance & Fee
+        double feeAmount = abs(station.indexOf(transactionFareDto.getDestStation()) - station.indexOf(transactionFareDto.getStartStation())) * 5;
+        double currentBalance = user.getBalance();
+        if (currentBalance < feeAmount) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        double newBalance = currentBalance - feeAmount;
+        user.setBalance(newBalance);
+
+        // Build Transaction Object to be saved.
+        Transaction newTransaction = new Transaction();
+        newTransaction.setUser(user);
+        newTransaction.setTransactionType(TransactionType.FARE);
+        newTransaction.setStartStation(transactionFareDto.getStartStation());
+        newTransaction.setDestStation(transactionFareDto.getDestStation());
+        newTransaction.setSwipeInTime(transactionFareDto.getSwipeInTime());
+        newTransaction.setSwipeOutTime(transactionFareDto.getSwipeOutTime());
+        newTransaction.setFee(feeAmount);
+        newTransaction.setBalanceBefore(currentBalance);
+        newTransaction.setBalanceAfter(newBalance);
+        newTransaction.setTransTime(transactionFareDto.getTransTime());
+        transactionRepository.save(newTransaction);
+        userRepository.save(user);
+
+        return new ResponseEntity<>(newBalance, HttpStatus.CREATED);
     }
 }

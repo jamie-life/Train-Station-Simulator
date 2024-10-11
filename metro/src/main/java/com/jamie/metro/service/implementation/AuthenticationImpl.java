@@ -1,9 +1,6 @@
 package com.jamie.metro.service.implementation;
 
-import com.jamie.metro.dto.BalanceUpdateRequestDto;
-import com.jamie.metro.dto.LoginDto;
-import com.jamie.metro.dto.RegisterDto;
-import com.jamie.metro.dto.UserDto;
+import com.jamie.metro.dto.*;
 import com.jamie.metro.exception.TrainException;
 import com.jamie.metro.service.AuthenticationService;
 import lombok.AllArgsConstructor;
@@ -97,6 +94,53 @@ public class AuthenticationImpl implements AuthenticationService {
     }
 
     @Override
+    public Double addTransaction(TransactionFareDto transactionFareDto) {
+        // API URL
+        String apiUrl = "http://localhost:8082/api/user/add-journey";
+
+        // Set headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        // Wrap RegisterDto Object in Http Entity with headers
+        HttpEntity<TransactionFareDto> request = new HttpEntity<>(transactionFareDto, headers);
+
+
+        try {
+            // Send POST request and receive response
+            ResponseEntity<Double> response = restTemplate.exchange(
+                    apiUrl,
+                    HttpMethod.POST,
+                    request,
+                    Double.class // The response type is String.class
+            );
+
+            // Check if the response is successful (HTTP 200 OK)
+            if (response.getStatusCode() == HttpStatus.CREATED) {
+                // Return the updated balance
+                return response.getBody();
+            }
+
+        } catch (HttpClientErrorException e) {
+            // Handle specific HTTP status errors
+            if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {
+                // Log or throw an exception with relevant details
+                String errorMessage = e.getResponseBodyAsString();
+                throw new TrainException(HttpStatus.BAD_REQUEST, "Bad request: " + errorMessage);
+            }
+
+            // Add more specific status code handling if needed
+
+        } catch (Exception e) {
+            // Log or handle other unexpected errors
+            throw new TrainException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+
+        // If the response was not 201 Created or an exception occurred, handle it
+        throw new TrainException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to Add Journey");
+    }
+
+    @Override
     public ResponseEntity<UserDto> getUser(String username) {
         // Define the URL for the user details endpoint in the authentication API
         String userApiURL = "http://localhost:8082/api/auth/" + username; // Adjust the URL as necessary
@@ -136,7 +180,7 @@ public class AuthenticationImpl implements AuthenticationService {
     }
 
     @Override
-    public double addBalance(Long userId, Double topUp) {
+    public double addBalance(TransactionTopUpDto transactionTopUpDto) {
         // API URL
         String apiUrl = "http://localhost:8082/api/user/add-funds";
 
@@ -144,18 +188,16 @@ public class AuthenticationImpl implements AuthenticationService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        // Create the request body with userId and topUp
-        BalanceUpdateRequestDto requestBody = new BalanceUpdateRequestDto(userId, topUp);
+        // Wrap RegisterDto Object in Http Entity with headers
+        HttpEntity<TransactionTopUpDto> request = new HttpEntity<>(transactionTopUpDto, headers);
 
-        // Create the request entity with the DTO and headers
-        HttpEntity<BalanceUpdateRequestDto> requestEntity = new HttpEntity<>(requestBody, headers);
 
         try {
             // Send POST request and receive response
             ResponseEntity<Double> response = restTemplate.exchange(
                     apiUrl,
                     HttpMethod.POST,
-                    requestEntity,
+                    request,
                     Double.class // The response type is Double.class
             );
 

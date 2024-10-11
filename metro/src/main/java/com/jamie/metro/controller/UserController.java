@@ -1,15 +1,15 @@
 package com.jamie.metro.controller;
 
-import com.jamie.metro.dto.LoginDto;
-import com.jamie.metro.dto.RegisterDto;
-import com.jamie.metro.dto.UserDto;
+import com.jamie.metro.dto.*;
 import com.jamie.metro.entity.Station;
+import com.jamie.metro.entity.Transaction;
 import com.jamie.metro.entity.TransactionType;
-import com.jamie.metro.entity.Transactions;
 import com.jamie.metro.entity.User;
 import com.jamie.metro.service.AuthenticationService;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +22,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import static java.lang.Math.abs;
+
 @AllArgsConstructor
 @Controller
 public class UserController {
@@ -29,9 +31,9 @@ public class UserController {
     private AuthenticationService authenticationService;
 
     // General Section
-    @ModelAttribute("stationNames")
+    @ModelAttribute("stationNames") // Station List is stored locally, just for testing.
     List<String> getStations(){
-        return Arrays.asList("Test", "Test2", "Test3", "Test4");
+        return Arrays.asList("Station 1", "Station 2", "Station 3", "Station 4");
     }
 
     @GetMapping("/")
@@ -98,8 +100,44 @@ public class UserController {
 
     // Journey Booking Section
     @RequestMapping("/train-booking")
-    public ModelAndView LogJourneyPage() {
+    public ModelAndView LogJourneyPage(HttpSession session) {
+        session.setAttribute("swipeInTime", LocalDateTime.now());
         return new ModelAndView("BookJourney", "stations", new Station());
+    }
+
+    // Check For Submit / Journey Check
+    @PostMapping("/train-booking")
+    public String loginCheck(@ModelAttribute("stations") Station station, RedirectAttributes redirectAttributes, HttpSession session) {
+
+        UserDto user = (UserDto) session.getAttribute("user");
+        session.setAttribute("swipeOutTime", LocalDateTime.now());
+        List<String> stationList = getStations();
+
+        double feeAmount = abs(stationList.indexOf(station.getEndStation()) - stationList.indexOf(station.getStartStation())) * 5;
+        double currentBalance = user.getBalance();
+
+        if (currentBalance < feeAmount) {
+            // Pass the error message as a flash attribute
+            redirectAttributes.addFlashAttribute("message", "Balance is Insufficient!");
+            // Redirect back to the sign-up page
+            return "redirect:train-booking";
+        }
+
+        TransactionFareDto journey = new TransactionFareDto(
+                user.getId(),
+                station.getStartStation(),
+                station.getEndStation(),
+                (LocalDateTime) session.getAttribute("swipeInTime"),
+                (LocalDateTime) session.getAttribute("swipeOutTime"),
+                (LocalDateTime) session.getAttribute("swipeOutTime")
+        );
+
+        Double newBalance = authenticationService.addTransaction(journey);
+        user.setBalance(newBalance);
+        session.setAttribute("user", user);
+
+
+        return "redirect:menu";
     }
 
     // Add Funds Section
@@ -111,14 +149,16 @@ public class UserController {
     // Check For Submit / Sign Up Check
     @PostMapping("/addFundUser")
     public String addFundsCheck(@RequestParam("funds") double funds, Model model, HttpSession session) {
-        System.out.println("Funds Selected: " + funds);
         UserDto user = (UserDto) session.getAttribute("user");
 
         if (user != null) {
             // Access the user's ID
-            Long userId = user.getId();  // Assuming the ID is a Long type
-            System.out.println("User ID: " + userId);
-            double newBalance = authenticationService.addBalance(userId, funds);
+            TransactionTopUpDto journey = new TransactionTopUpDto(
+                    user.getId(),
+                    funds,
+                    LocalDateTime.now()
+            );
+            double newBalance = authenticationService.addBalance(journey);
             user.setBalance(newBalance);
             session.setAttribute("user", user);
 
@@ -135,13 +175,13 @@ public class UserController {
         User user = (User)session.getAttribute("user");
 
 
-        Collection<Transactions> transactionsList = new ArrayList<>();
-        transactionsList.add(new Transactions(
+        Collection<Transaction> transactionList = new ArrayList<>();
+        transactionList.add(new Transaction(
                 1L,
                 user.getUserId(),
                 TransactionType.FARE,
-                1,
-                2,
+                "Station 1",
+                "Station 2",
                 LocalDateTime.now(),
                 LocalDateTime.now(),
                 5.0,
@@ -151,7 +191,7 @@ public class UserController {
                 ));
 
 
-        modelAndView.addObject("transactions", transactionsList);
+        modelAndView.addObject("transactions", transactionList);
         modelAndView.setViewName("ShowTransactions");
 
         return modelAndView;

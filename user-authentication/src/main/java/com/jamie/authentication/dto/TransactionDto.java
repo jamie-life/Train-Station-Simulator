@@ -1,7 +1,6 @@
-package com.jamie.authentication.entity;
+package com.jamie.authentication.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
+import com.jamie.authentication.entity.TransactionType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,22 +10,10 @@ import java.time.LocalDateTime;
 
 @Setter
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "Transactions")
-public class Transaction {
+@NoArgsConstructor
+public class TransactionDto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long transId;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)  // Foreign key column
-    @JsonIgnore
-    private User user;
-
-    @Enumerated(EnumType.STRING)  // Store enum as a string in DB
     private TransactionType transactionType;
 
     private String startStation; // Can be NULL for top-ups
@@ -44,6 +31,4 @@ public class Transaction {
     private double balanceAfter;
 
     private LocalDateTime transTime;
-
 }
-

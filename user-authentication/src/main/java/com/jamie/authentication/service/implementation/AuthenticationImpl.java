@@ -9,6 +9,7 @@ import com.jamie.authentication.repository.UserRepository;
 import com.jamie.authentication.service.AuthenticationService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.lang.Math.abs;
 
@@ -30,6 +32,7 @@ public class AuthenticationImpl implements AuthenticationService {
     private TransactionRepository transactionRepository;
     private PasswordEncoder passwordEncoder;
     private AuthenticationManager authenticationManager;
+    private ModelMapper modelMapper;
 
     @Override
     public ResponseEntity<String> register(RegisterDto registerDto) {
@@ -161,5 +164,20 @@ public class AuthenticationImpl implements AuthenticationService {
         userRepository.save(user);
 
         return new ResponseEntity<>(newBalance, HttpStatus.CREATED);
+    }
+
+    @Override
+    public ResponseEntity<List<TransactionDto>> getTransactions(Long id) {
+        // Fetch User by Id and verify it exist.
+        User user = userRepository.findById(id).orElse(null);
+        if (user == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND); // Handle the case when the user is not found
+        }
+
+        List<Transaction> transactionLists = transactionRepository.findByUserUserId(id);
+        List<TransactionDto> transactionListsDto = transactionLists.stream()
+                .map(transaction -> modelMapper.map(transaction, TransactionDto.class))
+                .toList();
+        return new ResponseEntity<>(transactionListsDto, HttpStatus.OK);
     }
 }

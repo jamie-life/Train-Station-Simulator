@@ -4,11 +4,15 @@ import com.jamie.metro.dto.*;
 import com.jamie.metro.exception.TrainException;
 import com.jamie.metro.service.AuthenticationService;
 import lombok.AllArgsConstructor;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.Collections;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -178,6 +182,47 @@ public class AuthenticationImpl implements AuthenticationService {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @Override
+    public List<TransactionDto> getTransactions(Long id) {
+        System.out.println("I was Called!");
+        // Define the URL for the user details endpoint in the authentication API
+        String userApiURL = "http://localhost:8082/api/user/get-transactions/" + id; // Adjust the URL as necessary
+
+        // Create headers for the request if needed (e.g., for authentication)
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", "application/json");
+        // Add any other headers required, such as Authorization
+
+        // Create the HttpEntity object to include the headers
+        HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
+
+        try {
+            // Send the GET request to the user API
+            ResponseEntity<List<TransactionDto>> response = restTemplate.exchange(
+                    userApiURL,
+                    HttpMethod.GET,
+                    requestEntity,
+                    new ParameterizedTypeReference<List<TransactionDto>>() {} // Specify the response type
+            );
+
+            // Check if the response is successful and return the list
+            if (response.getStatusCode() == HttpStatus.OK) {
+                return response.getBody();
+            } else {
+                // Return an empty list or handle as needed
+                return Collections.emptyList();
+            }
+        } catch (HttpClientErrorException e) {
+            // Log the error and return an empty list
+            String errorMessage = e.getResponseBodyAsString();
+            return Collections.emptyList();
+        } catch (Exception e) {
+            // Handle other exceptions (network issues, etc.) and return an empty list
+            return Collections.emptyList();
+        }
+    }
+
 
     @Override
     public double addBalance(TransactionTopUpDto transactionTopUpDto) {

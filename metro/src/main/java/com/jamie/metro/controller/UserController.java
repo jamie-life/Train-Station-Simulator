@@ -2,14 +2,9 @@ package com.jamie.metro.controller;
 
 import com.jamie.metro.dto.*;
 import com.jamie.metro.entity.Station;
-import com.jamie.metro.entity.Transaction;
-import com.jamie.metro.entity.TransactionType;
-import com.jamie.metro.entity.User;
 import com.jamie.metro.service.AuthenticationService;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -19,8 +14,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.lang.Math.abs;
 
@@ -77,7 +72,6 @@ public class UserController {
     @PostMapping("login")
     public String loginCheck(@ModelAttribute("user") LoginDto user, RedirectAttributes redirectAttributes, HttpSession session) {
         String response = authenticationService.login(user);
-        System.out.println(response);
 
         // Check for errors
         if (response.startsWith("Error:")) {
@@ -169,31 +163,74 @@ public class UserController {
     }
 
     @RequestMapping("/transactions-history")
-    public ModelAndView showAllEmployeesController(HttpSession session) {
+    public ModelAndView getAllTransactions(@RequestParam(defaultValue = "0") int page,
+                                           @RequestParam(defaultValue = "ALL") String transactionType,
+                                           HttpSession session) {
         ModelAndView modelAndView = new ModelAndView();
 
-        User user = (User)session.getAttribute("user");
+        UserDto user = (UserDto) session.getAttribute("user");
+        List<TransactionDto> transactionList = authenticationService.getTransactions(user.getId());
+
+        // Save transactions to the session
+        session.setAttribute("transaction", transactionList);
 
 
-        Collection<Transaction> transactionList = new ArrayList<>();
-        transactionList.add(new Transaction(
-                1L,
-                user.getUserId(),
-                TransactionType.FARE,
-                "Station 1",
-                "Station 2",
-                LocalDateTime.now(),
-                LocalDateTime.now(),
-                5.0,
-                10.0,
-                5.0,
-                LocalDateTime.now()
-                ));
+        // Pagination setup
+        int pageSize = 10; // Define your page size
+        int totalPages = (int) Math.ceil((double) transactionList.size() / pageSize);
 
+        // Adjust list to only show items for the current page
+        List<TransactionDto> transactionsToShow = transactionList.stream()
+                .skip(page * pageSize)
+                .limit(pageSize)
+                .collect(Collectors.toList());
 
-        modelAndView.addObject("transactions", transactionList);
+        modelAndView.addObject("transaction", transactionsToShow);
+        modelAndView.addObject("transactionType", transactionType);
+        modelAndView.addObject("currentPage", page);
+        modelAndView.addObject("totalPages", totalPages);
         modelAndView.setViewName("ShowTransactions");
 
         return modelAndView;
     }
+
+    @GetMapping("/transactions")
+    public String getFilteredTransactions(
+            @RequestParam(required = false) String transactionType,
+            @RequestParam(defaultValue = "0") int page, // Default page to 0
+            Model model,
+            HttpSession session) {
+
+        // Fetch transactions for the user
+        List<TransactionDto> allTransactions = (List<TransactionDto>) session.getAttribute("transaction");
+
+        // Filter transactions based on the selected type if provided
+        List<TransactionDto> filteredTransactions = allTransactions;
+        if (transactionType != null && !transactionType.equals("ALL")) {
+            filteredTransactions = allTransactions.stream()
+                    .filter(transaction -> transactionType.equalsIgnoreCase(transaction.getTransactionType().toString()))
+                    .collect(Collectors.toList());
+        }
+
+        // Calculate total pages and apply pagination
+        int pageSize = 10;
+        int totalTransactions = filteredTransactions.size();
+        int totalPages = (int) Math.ceil((double) totalTransactions / pageSize);
+
+        // Get transactions for the current page
+        List<TransactionDto> transactionsToShow = filteredTransactions.stream()
+                .skip(page * pageSize)
+                .limit(pageSize)
+                .collect(Collectors.toList());
+
+        // Add the transactions and selected filter to the model
+        model.addAttribute("transaction", transactionsToShow);
+        model.addAttribute("transactionType", transactionType);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages);
+
+        return "ShowTransactions"; // Your Thymeleaf template name
+    }
+
+
 }

@@ -1,5 +1,6 @@
-package com.jamie.metro.entity;
+package com.jamie.metro.dto;
 
+import com.jamie.metro.entity.TransactionType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,16 +8,11 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-
 @Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Transaction {
-
-    private Long transId;
-
-    private Long userId;
+public class TransactionDto {
 
     private TransactionType transactionType;
 
@@ -35,5 +31,4 @@ public class Transaction {
     private double balanceAfter;
 
     private LocalDateTime transTime;
-
 }

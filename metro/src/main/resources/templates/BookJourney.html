@@ -101,7 +101,7 @@
   <h2 th:text="'Welcome ' + ${session.user.firstName} + '!'"></h2>
   <h2 class="balance" th:text="'Your Account Balance is: ' + ${session.user.balance}"></h2>
 
-  <form th:object="${stations}" method="post">
+  <form th:object="${stations}" method="post" onsubmit="return validateForm()">
     <label for="startStation">Enter Current Station:</label>
     <select id="startStation" th:field="*{startStation}" onchange="updateEndStationOptions()">
       <option value="" disabled selected>Select Current Station</option> <!-- Default hint option -->
@@ -116,21 +116,19 @@
 
     <input type="submit" value="Submit">
   </form>
-  <p th:text="${message}" class="message"></p>
+  <p th:text="${message}" class="message" id="display-message"></p>
   <a class="menu-link" href="./menu">Go To Menu Page</a>
 </div>
 
 <script>
   // Store original options for the end station dropdown
   const originalOptions = Array.from(document.querySelectorAll('#startStation option')).filter(option => option.value !== "");
-
   function updateEndStationOptions() {
     // Get the selected starting station
     const startStation = document.getElementById('startStation').value;
 
     // Get the end station dropdown
     const endStationSelect = document.getElementById('endStation');
-
     // Clear the end station dropdown
     endStationSelect.innerHTML = '';
 
@@ -155,6 +153,24 @@
   document.addEventListener('DOMContentLoaded', () => {
     updateEndStationOptions();
   });
+
+  // validate form
+  function validateForm() {
+    const startStation = document.getElementById('startStation').value;
+    const endStation = document.getElementById('endStation').value;
+    const displayMessage = document.getElementById('display-message');
+
+    // Clear any previous error messages
+    displayMessage.textContent = '';
+
+    if (!startStation || !endStation) {
+      // Show an error message if either field is empty
+      displayMessage.textContent = 'Please select both the Current Station and End Station.';
+      return false; // Prevent form submission
+    }
+
+    return true; // Allow form submission
+  }
 </script>
 
 </body>

@@ -20,11 +20,12 @@ public class AuthenticationImpl implements AuthenticationService {
 
 
     private final RestTemplate restTemplate;
+    private final String base_api_url = "https://9764172992.xyz";
 
     @Override
     public String register(RegisterDto registerDto) {
         // Pass RegisterDto to Login API using Rest Template
-        String RegisterApiURL = "http://localhost:8082/api/auth/register";
+        String RegisterApiURL = base_api_url + "/api/auth/register";
 
         // Headers
         HttpHeaders headers = new HttpHeaders();
@@ -64,7 +65,7 @@ public class AuthenticationImpl implements AuthenticationService {
     @Override
     public String login(LoginDto loginDto) {
         // Pass RegisterDto to Login API using Rest Template
-        String LoginApiURL = "http://localhost:8082/api/auth/login";
+        String LoginApiURL = base_api_url + "/api/auth/login";
 
         // Headers
         HttpHeaders headers = new HttpHeaders();
@@ -100,7 +101,7 @@ public class AuthenticationImpl implements AuthenticationService {
     @Override
     public Double addTransaction(TransactionFareDto transactionFareDto) {
         // API URL
-        String apiUrl = "http://localhost:8082/api/user/add-journey";
+        String apiUrl = base_api_url + "/api/user/add-journey";
 
         // Set headers
         HttpHeaders headers = new HttpHeaders();
@@ -147,7 +148,7 @@ public class AuthenticationImpl implements AuthenticationService {
     @Override
     public ResponseEntity<UserDto> getUser(String username) {
         // Define the URL for the user details endpoint in the authentication API
-        String userApiURL = "http://localhost:8082/api/auth/" + username; // Adjust the URL as necessary
+        String userApiURL = base_api_url + "/api/auth/" + username; // Adjust the URL as necessary
 
         // Create headers for the request if needed (e.g., for authentication)
         HttpHeaders headers = new HttpHeaders();
@@ -187,7 +188,7 @@ public class AuthenticationImpl implements AuthenticationService {
     public List<TransactionDto> getTransactions(Long id) {
         System.out.println("I was Called!");
         // Define the URL for the user details endpoint in the authentication API
-        String userApiURL = "http://localhost:8082/api/user/get-transactions/" + id; // Adjust the URL as necessary
+        String userApiURL = base_api_url + "/api/user/get-transactions/" + id; // Adjust the URL as necessary
 
         // Create headers for the request if needed (e.g., for authentication)
         HttpHeaders headers = new HttpHeaders();
@@ -203,7 +204,8 @@ public class AuthenticationImpl implements AuthenticationService {
                     userApiURL,
                     HttpMethod.GET,
                     requestEntity,
-                    new ParameterizedTypeReference<List<TransactionDto>>() {} // Specify the response type
+                    new ParameterizedTypeReference<>() {
+                    } // Specify the response type
             );
 
             // Check if the response is successful and return the list
@@ -227,7 +229,7 @@ public class AuthenticationImpl implements AuthenticationService {
     @Override
     public double addBalance(TransactionTopUpDto transactionTopUpDto) {
         // API URL
-        String apiUrl = "http://localhost:8082/api/user/add-funds";
+        String apiUrl = base_api_url + "/api/user/add-funds";
 
         // Set headers
         HttpHeaders headers = new HttpHeaders();

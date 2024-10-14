@@ -46,7 +46,7 @@ public class SpringSecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:8080")); //allows React to access the API from origin on port 3000. Change accordingly
+        configuration.setAllowedOrigins(List.of( "https://8626692352.xyz"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH"));
         configuration.setAllowCredentials(true);
         configuration.addAllowedHeader("*");

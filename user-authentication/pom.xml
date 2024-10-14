@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.jamie</groupId>
-	<artifactId>login</artifactId>
+	<artifactId>authentication</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>User Authentication Rest API</name>
-	<description>Login API for Train Station Simulator</description>
+	<description>Authentication API for Train Station Simulator</description>
 	<url/>
 	<licenses>
 		<license/>

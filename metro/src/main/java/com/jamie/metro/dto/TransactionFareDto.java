@@ -1,6 +1,5 @@
 package com.jamie.metro.dto;
 
-import com.jamie.metro.entity.TransactionType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

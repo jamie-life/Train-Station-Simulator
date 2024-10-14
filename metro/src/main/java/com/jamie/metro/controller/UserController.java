@@ -12,7 +12,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -65,7 +64,7 @@ public class UserController {
     // Login Section
     @RequestMapping("login")
     public ModelAndView LoginPage() {
-        return new ModelAndView("User/login", "user", new LoginDto());
+        return new ModelAndView("User/Login", "user", new LoginDto());
     }
 
     // Check For Submit / Login Check
@@ -88,13 +87,24 @@ public class UserController {
 
     // Menu Section
     @RequestMapping("/menu")
-    public ModelAndView getMenuPage() {
+    public ModelAndView getMenuPage(HttpSession session) {
+        // Check if user exist.
+        UserDto user = (UserDto) session.getAttribute("user");
+        if (user == null) {
+            // If no user found, redirect to the login page
+            return new ModelAndView("redirect:/login");
+        }
         return new ModelAndView("Menu");
     }
 
     // Journey Booking Section
     @RequestMapping("/train-booking")
     public ModelAndView LogJourneyPage(HttpSession session) {
+        UserDto user = (UserDto) session.getAttribute("user");
+        if (user == null) {
+            // If no user found, redirect to the login page
+            return new ModelAndView("redirect:/login");
+        }
         session.setAttribute("swipeInTime", LocalDateTime.now());
         return new ModelAndView("BookJourney", "stations", new Station());
     }
@@ -136,13 +146,18 @@ public class UserController {
 
     // Add Funds Section
     @RequestMapping("/add-funds")
-    public ModelAndView addFundsPage() {
+    public ModelAndView addFundsPage(HttpSession session) {
+        UserDto user = (UserDto) session.getAttribute("user");
+        if (user == null) {
+            // If no user found, redirect to the login page
+            return new ModelAndView("redirect:/login");
+        }
         return new ModelAndView("AddFunds");
     }
 
     // Check For Submit / Sign Up Check
     @PostMapping("/addFundUser")
-    public String addFundsCheck(@RequestParam("funds") double funds, Model model, HttpSession session) {
+    public String addFundsCheck(@RequestParam("funds") double funds, HttpSession session) {
         UserDto user = (UserDto) session.getAttribute("user");
 
         if (user != null) {
@@ -159,16 +174,20 @@ public class UserController {
         } else {
             System.out.println("No user found in session");
         }
-        return "/AddFunds";
+        return "redirect:menu";
     }
 
     @RequestMapping("/transactions-history")
     public ModelAndView getAllTransactions(@RequestParam(defaultValue = "0") int page,
                                            @RequestParam(defaultValue = "ALL") String transactionType,
                                            HttpSession session) {
+        UserDto user = (UserDto) session.getAttribute("user");
+        if (user == null) {
+            // If no user found, redirect to the login page
+            return new ModelAndView("redirect:/login");
+        }
         ModelAndView modelAndView = new ModelAndView();
 
-        UserDto user = (UserDto) session.getAttribute("user");
         List<TransactionDto> transactionList = authenticationService.getTransactions(user.getId());
 
         // Save transactions to the session
@@ -209,7 +228,7 @@ public class UserController {
         if (transactionType != null && !transactionType.equals("ALL")) {
             filteredTransactions = allTransactions.stream()
                     .filter(transaction -> transactionType.equalsIgnoreCase(transaction.getTransactionType().toString()))
-                    .collect(Collectors.toList());
+                    .toList();
         }
 
         // Calculate total pages and apply pagination

@@ -16,6 +16,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -93,6 +94,10 @@ public class AuthenticationImpl implements AuthenticationService {
     @Transactional
     @Override
     public ResponseEntity<Double> topUpBalance(TransactionTopUpDto transactionTopUpDto) {
+        List<Double> topUpValues = List.of(5.0, 10.0, 20.0, 50.0);
+        if (!topUpValues.contains(transactionTopUpDto.getTopUp())) {
+            return new ResponseEntity<>(transactionTopUpDto.getTopUp(), HttpStatus.BAD_REQUEST);
+        }
 
         // Fetch User by Id and verify it exist.
         User user = userRepository.findById(transactionTopUpDto.getUserId()).orElse(null);

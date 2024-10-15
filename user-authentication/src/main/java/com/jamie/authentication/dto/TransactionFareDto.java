@@ -1,6 +1,5 @@
 package com.jamie.authentication.dto;
 
-import com.jamie.authentication.entity.TransactionType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,8 +12,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TransactionFareDto {
-
-    private Long userId;
 
     private String startStation; // Can be NULL for top-ups
 

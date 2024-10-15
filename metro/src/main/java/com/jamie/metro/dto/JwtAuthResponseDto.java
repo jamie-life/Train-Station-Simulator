@@ -5,11 +5,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Setter
 @Getter
-public class UserDto {
+public class JwtAuthResponseDto {
+    private String token;
     private String username;
     private String firstName;
     private double balance;

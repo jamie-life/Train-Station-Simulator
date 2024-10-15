@@ -12,7 +12,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(TrainException.class)
     public ResponseEntity<ErrorDetails> handleTaskAPIException(TrainException trainException,
-                                                               WebRequest webRequest){
+                                                               WebRequest webRequest) {
 
         ErrorDetails errorDetails = new ErrorDetails(
                 LocalDateTime.now(),

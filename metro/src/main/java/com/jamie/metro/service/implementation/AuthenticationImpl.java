@@ -1,18 +1,18 @@
 package com.jamie.metro.service.implementation;
 
-import com.jamie.metro.dto.*;
+import com.jamie.metro.dto.JwtAuthResponseDto;
+import com.jamie.metro.dto.LoginDto;
+import com.jamie.metro.dto.RegisterDto;
+import com.jamie.metro.dto.UserDto;
 import com.jamie.metro.exception.TrainException;
 import com.jamie.metro.service.AuthenticationService;
+import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
-import org.springframework.core.ParameterizedTypeReference;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.Collections;
-import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -20,12 +20,15 @@ public class AuthenticationImpl implements AuthenticationService {
 
 
     private final RestTemplate restTemplate;
-    private final String base_api_url = "https://9764172992.xyz";
+    private HttpSession session;
+    //private final String base_api_url = "https://9764172992.xyz/api/auth";
+    private final String base_api_url = "http://localhost:8082/api/auth";
+    private ModelMapper modelMapper;
 
     @Override
     public String register(RegisterDto registerDto) {
         // Pass RegisterDto to Login API using Rest Template
-        String RegisterApiURL = base_api_url + "/api/auth/register";
+        String RegisterApiURL = base_api_url + "/register";
 
         // Headers
         HttpHeaders headers = new HttpHeaders();
@@ -63,9 +66,9 @@ public class AuthenticationImpl implements AuthenticationService {
     }
 
     @Override
-    public String login(LoginDto loginDto) {
+    public String login(LoginDto loginDto, HttpSession session) {
         // Pass RegisterDto to Login API using Rest Template
-        String LoginApiURL = base_api_url + "/api/auth/login";
+        String LoginApiURL = base_api_url + "/login";
 
         // Headers
         HttpHeaders headers = new HttpHeaders();
@@ -77,16 +80,20 @@ public class AuthenticationImpl implements AuthenticationService {
         // Send the Post Request to User Authentication API
         try {
             // Perform the API request
-            ResponseEntity<String> response = restTemplate.exchange(
+            ResponseEntity<JwtAuthResponseDto> response = restTemplate.exchange(
                     LoginApiURL,
                     HttpMethod.POST,
                     request,
-                    String.class
+                    JwtAuthResponseDto.class
             );
 
 
             // Handle 201 Created response
-            if (response.getStatusCode() == HttpStatus.ACCEPTED) {
+            if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
+                JwtAuthResponseDto responseDto = response.getBody();
+                UserDto userDto = modelMapper.map(responseDto, UserDto.class);
+                session.setAttribute("user", userDto);
+                session.setAttribute("token", responseDto.getToken());
                 return "User has been successfully Logged In.";
             }
         } catch (HttpClientErrorException e) {
@@ -99,178 +106,53 @@ public class AuthenticationImpl implements AuthenticationService {
     }
 
     @Override
-    public Double addTransaction(TransactionFareDto transactionFareDto) {
-        // API URL
-        String apiUrl = base_api_url + "/api/user/add-journey";
-
-        // Set headers
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        // Wrap RegisterDto Object in Http Entity with headers
-        HttpEntity<TransactionFareDto> request = new HttpEntity<>(transactionFareDto, headers);
-
+    public void logout(HttpSession session) {
+        // Define the URL for your external server's logout endpoint
+        String logoutUrl = "http://localhost:8082/logout";
 
         try {
-            // Send POST request and receive response
-            ResponseEntity<Double> response = restTemplate.exchange(
-                    apiUrl,
+            // Get the JWT token from the session
+            String token = (String) session.getAttribute("token");
+
+            if (token == null) {
+                System.err.println("Token is missing, cannot log out");
+                return;
+            }
+
+            // Create headers and add the Authorization header with the Bearer token
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "Bearer " + token);
+
+            // Create HttpEntity with the headers (no body needed for logout)
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+
+            // Send the POST request to the external server's logout endpoint
+            ResponseEntity<String> response = restTemplate.exchange(
+                    logoutUrl,
                     HttpMethod.POST,
-                    request,
-                    Double.class // The response type is String.class
+                    entity,
+                    String.class
             );
 
-            // Check if the response is successful (HTTP 200 OK)
-            if (response.getStatusCode() == HttpStatus.CREATED) {
-                // Return the updated balance
-                return response.getBody();
-            }
+            // If logout is successful on external server
+            if (response.getStatusCode().is2xxSuccessful()) {
+                System.out.println("Successfully logged out from external system");
 
-        } catch (HttpClientErrorException e) {
-            // Handle specific HTTP status errors
-            if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {
-                // Log or throw an exception with relevant details
-                String errorMessage = e.getResponseBodyAsString();
-                throw new TrainException(HttpStatus.BAD_REQUEST, "Bad request: " + errorMessage);
-            }
+                // Clear JWT from the session
+                session.removeAttribute("token");
+                session.removeAttribute("user");
 
-            // Add more specific status code handling if needed
+                // Invalidate the session
+                session.invalidate();
 
-        } catch (Exception e) {
-            // Log or handle other unexpected errors
-            throw new TrainException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
-        }
-
-        // If the response was not 201 Created or an exception occurred, handle it
-        throw new TrainException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to Add Journey");
-    }
-
-    @Override
-    public ResponseEntity<UserDto> getUser(String username) {
-        // Define the URL for the user details endpoint in the authentication API
-        String userApiURL = base_api_url + "/api/auth/" + username; // Adjust the URL as necessary
-
-        // Create headers for the request if needed (e.g., for authentication)
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Content-Type", "application/json");
-        // Add any other headers required, such as Authorization
-
-        // Create the HttpEntity object to include the headers
-        HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
-
-        try {
-            // Send the GET request to the user API
-            ResponseEntity<UserDto> response = restTemplate.exchange(
-                    userApiURL,
-                    HttpMethod.GET,
-                    requestEntity,
-                    UserDto.class // Specify the response type
-            );
-
-            // Check if the response is successful
-            if (response.getStatusCode() == HttpStatus.OK) {
-                return new ResponseEntity<>(response.getBody(), HttpStatus.OK);
             } else {
-                // Handle other status codes if necessary
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                System.err.println("Logout failed: " + response.getStatusCode());
             }
-        } catch (HttpClientErrorException e) {
-            // Handle errors (e.g., user not found, unauthorized access)
-            String errorMessage = e.getResponseBodyAsString();
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            // Handle other exceptions (network issues, etc.)
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @Override
-    public List<TransactionDto> getTransactions(Long id) {
-        System.out.println("I was Called!");
-        // Define the URL for the user details endpoint in the authentication API
-        String userApiURL = base_api_url + "/api/user/get-transactions/" + id; // Adjust the URL as necessary
-
-        // Create headers for the request if needed (e.g., for authentication)
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Content-Type", "application/json");
-        // Add any other headers required, such as Authorization
-
-        // Create the HttpEntity object to include the headers
-        HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
-
-        try {
-            // Send the GET request to the user API
-            ResponseEntity<List<TransactionDto>> response = restTemplate.exchange(
-                    userApiURL,
-                    HttpMethod.GET,
-                    requestEntity,
-                    new ParameterizedTypeReference<>() {
-                    } // Specify the response type
-            );
-
-            // Check if the response is successful and return the list
-            if (response.getStatusCode() == HttpStatus.OK) {
-                return response.getBody();
-            } else {
-                // Return an empty list or handle as needed
-                return Collections.emptyList();
-            }
-        } catch (HttpClientErrorException e) {
-            // Log the error and return an empty list
-            String errorMessage = e.getResponseBodyAsString();
-            return Collections.emptyList();
-        } catch (Exception e) {
-            // Handle other exceptions (network issues, etc.) and return an empty list
-            return Collections.emptyList();
-        }
-    }
-
-
-    @Override
-    public double addBalance(TransactionTopUpDto transactionTopUpDto) {
-        // API URL
-        String apiUrl = base_api_url + "/api/user/add-funds";
-
-        // Set headers
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        // Wrap RegisterDto Object in Http Entity with headers
-        HttpEntity<TransactionTopUpDto> request = new HttpEntity<>(transactionTopUpDto, headers);
-
-
-        try {
-            // Send POST request and receive response
-            ResponseEntity<Double> response = restTemplate.exchange(
-                    apiUrl,
-                    HttpMethod.POST,
-                    request,
-                    Double.class // The response type is Double.class
-            );
-
-            // Check if the response is successful (HTTP 200 OK)
-            if (response.getStatusCode() == HttpStatus.OK) {
-                // Return the updated balance
-                return response.getBody();
-            }
-
-        } catch (HttpClientErrorException e) {
-            // Handle specific HTTP status errors
-            if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {
-                // Log or throw an exception with relevant details
-                String errorMessage = e.getResponseBodyAsString();
-                throw new TrainException(HttpStatus.BAD_REQUEST, "Bad request: " + errorMessage);
-            }
-
-            // Add more specific status code handling if needed
 
         } catch (Exception e) {
-            // Log or handle other unexpected errors
-            throw new TrainException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+            // Handle errors such as communication failure, etc.
+            System.err.println("Error during external logout: " + e.getMessage());
         }
-
-        // If the response was not 201 Created or an exception occurred, handle it
-        throw new TrainException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to update balance.");
     }
 
 

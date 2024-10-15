@@ -1,16 +1,14 @@
 package com.jamie.metro.service;
 
-import com.jamie.metro.dto.*;
-import org.springframework.http.ResponseEntity;
-
-import java.util.List;
+import com.jamie.metro.dto.LoginDto;
+import com.jamie.metro.dto.RegisterDto;
+import jakarta.servlet.http.HttpSession;
 
 public interface AuthenticationService {
-    String register (RegisterDto registerDto);
-    String login (LoginDto registerDto);
-    Double addTransaction (TransactionFareDto transactionFareDto);
-    double addBalance (TransactionTopUpDto transactionTopUpDto);
-    ResponseEntity<UserDto> getUser (String username);
-    List<TransactionDto> getTransactions (Long id);
+    String register(RegisterDto registerDto);
+
+    String login(LoginDto loginDto, HttpSession session);
+
+    void logout(HttpSession session);
 
 }

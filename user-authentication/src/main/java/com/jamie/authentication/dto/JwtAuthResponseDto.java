@@ -5,11 +5,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Setter
 @Getter
-public class BalanceUpdateRequestDto {
-    private Long userId;
-    private Double topUp;
+public class JwtAuthResponseDto {
+    private String token;
+    private String username;
+    private String firstName;
+    private double balance;
 }

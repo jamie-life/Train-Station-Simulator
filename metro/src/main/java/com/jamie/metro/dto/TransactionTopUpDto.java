@@ -13,8 +13,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class TransactionTopUpDto {
 
-    private Long userId;
-
     private double topUp; // Amount added in top-up
 
     private LocalDateTime transTime;

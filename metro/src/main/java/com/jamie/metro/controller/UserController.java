@@ -3,6 +3,8 @@ package com.jamie.metro.controller;
 import com.jamie.metro.dto.*;
 import com.jamie.metro.entity.Station;
 import com.jamie.metro.service.AuthenticationService;
+import com.jamie.metro.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -23,13 +25,32 @@ import static java.lang.Math.abs;
 public class UserController {
 
     private AuthenticationService authenticationService;
+    private UserService userService;
+
+    private static List<TransactionDto> getTransactionsDto(int page, List<TransactionDto> transactionList, int pageSize) {
+        return transactionList.stream()
+                .skip((long) page * pageSize)
+                .limit(pageSize)
+                .collect(Collectors.toList());
+    }
+
+    private static ModelAndView getModelAndView(HttpSession session) {
+        UserDto user = (UserDto) session.getAttribute("user");
+        if (user == null) {
+            // If no user found, redirect to the login page
+            return new ModelAndView("redirect:/login");
+        }
+        return null;
+    }
 
     // General Section
-    @ModelAttribute("stationNames") // Station List is stored locally, just for testing.
-    List<String> getStations(){
+    @ModelAttribute("stationNames")
+    // Station List is stored locally, just for testing.
+    List<String> getStations() {
         return Arrays.asList("Station 1", "Station 2", "Station 3", "Station 4");
     }
 
+    // Redirect The Base URL to Login.
     @GetMapping("/")
     public String redirectToLogin() {
         return "redirect:login";  // Redirects the user to the "/login" page
@@ -70,7 +91,7 @@ public class UserController {
     // Check For Submit / Login Check
     @PostMapping("login")
     public String loginCheck(@ModelAttribute("user") LoginDto user, RedirectAttributes redirectAttributes, HttpSession session) {
-        String response = authenticationService.login(user);
+        String response = authenticationService.login(user, session);
 
         // Check for errors
         if (response.startsWith("Error:")) {
@@ -80,8 +101,6 @@ public class UserController {
             return "redirect:login";
         }
 
-        UserDto saveUser = authenticationService.getUser(user.getUsername()).getBody();
-        session.setAttribute("user", saveUser);
         return "redirect:menu";
     }
 
@@ -89,22 +108,24 @@ public class UserController {
     @RequestMapping("/menu")
     public ModelAndView getMenuPage(HttpSession session) {
         // Check if user exist.
-        UserDto user = (UserDto) session.getAttribute("user");
-        if (user == null) {
-            // If no user found, redirect to the login page
-            return new ModelAndView("redirect:/login");
-        }
+        ModelAndView view = getModelAndView(session);
+        if (view != null) return view;
         return new ModelAndView("Menu");
+    }
+
+    // Log Out Section
+    @PostMapping("/logout")
+    public String logout(HttpSession session) {
+        authenticationService.logout(session);
+        // Redirect to the login page
+        return "redirect:/login";
     }
 
     // Journey Booking Section
     @RequestMapping("/train-booking")
     public ModelAndView LogJourneyPage(HttpSession session) {
-        UserDto user = (UserDto) session.getAttribute("user");
-        if (user == null) {
-            // If no user found, redirect to the login page
-            return new ModelAndView("redirect:/login");
-        }
+        ModelAndView view = getModelAndView(session);
+        if (view != null) return view;
         session.setAttribute("swipeInTime", LocalDateTime.now());
         return new ModelAndView("BookJourney", "stations", new Station());
     }
@@ -128,7 +149,6 @@ public class UserController {
         }
 
         TransactionFareDto journey = new TransactionFareDto(
-                user.getId(),
                 station.getStartStation(),
                 station.getEndStation(),
                 (LocalDateTime) session.getAttribute("swipeInTime"),
@@ -136,7 +156,7 @@ public class UserController {
                 (LocalDateTime) session.getAttribute("swipeOutTime")
         );
 
-        Double newBalance = authenticationService.addTransaction(journey);
+        Double newBalance = userService.addTransaction(journey);
         user.setBalance(newBalance);
         session.setAttribute("user", user);
 
@@ -147,48 +167,37 @@ public class UserController {
     // Add Funds Section
     @RequestMapping("/add-funds")
     public ModelAndView addFundsPage(HttpSession session) {
-        UserDto user = (UserDto) session.getAttribute("user");
-        if (user == null) {
-            // If no user found, redirect to the login page
-            return new ModelAndView("redirect:/login");
-        }
+        ModelAndView view = getModelAndView(session);
+        if (view != null) return view;
         return new ModelAndView("AddFunds");
     }
 
-    // Check For Submit / Sign Up Check
+    // Check For Submit / Add Funds Check
     @PostMapping("/addFundUser")
     public String addFundsCheck(@RequestParam("funds") double funds, HttpSession session) {
         UserDto user = (UserDto) session.getAttribute("user");
 
-        if (user != null) {
-            // Access the user's ID
-            TransactionTopUpDto journey = new TransactionTopUpDto(
-                    user.getId(),
-                    funds,
-                    LocalDateTime.now()
-            );
-            double newBalance = authenticationService.addBalance(journey);
-            user.setBalance(newBalance);
-            session.setAttribute("user", user);
+        TransactionTopUpDto journey = new TransactionTopUpDto(
+                funds,
+                LocalDateTime.now()
+        );
+        double newBalance = userService.addBalance(journey);
+        user.setBalance(newBalance);
+        session.setAttribute("user", user);
 
-        } else {
-            System.out.println("No user found in session");
-        }
         return "redirect:menu";
     }
 
+    // Transactions History Section
     @RequestMapping("/transactions-history")
     public ModelAndView getAllTransactions(@RequestParam(defaultValue = "0") int page,
                                            @RequestParam(defaultValue = "ALL") String transactionType,
                                            HttpSession session) {
-        UserDto user = (UserDto) session.getAttribute("user");
-        if (user == null) {
-            // If no user found, redirect to the login page
-            return new ModelAndView("redirect:/login");
-        }
+        ModelAndView view = getModelAndView(session);
+        if (view != null) return view;
         ModelAndView modelAndView = new ModelAndView();
 
-        List<TransactionDto> transactionList = authenticationService.getTransactions(user.getId());
+        List<TransactionDto> transactionList = userService.getTransactions();
 
         // Save transactions to the session
         session.setAttribute("transaction", transactionList);
@@ -199,10 +208,7 @@ public class UserController {
         int totalPages = (int) Math.ceil((double) transactionList.size() / pageSize);
 
         // Adjust list to only show items for the current page
-        List<TransactionDto> transactionsToShow = transactionList.stream()
-                .skip(page * pageSize)
-                .limit(pageSize)
-                .collect(Collectors.toList());
+        List<TransactionDto> transactionsToShow = getTransactionsDto(page, transactionList, pageSize);
 
         modelAndView.addObject("transaction", transactionsToShow);
         modelAndView.addObject("transactionType", transactionType);
@@ -213,6 +219,7 @@ public class UserController {
         return modelAndView;
     }
 
+    // Filtered Transactions History Section
     @GetMapping("/transactions")
     public String getFilteredTransactions(
             @RequestParam(required = false) String transactionType,
@@ -237,10 +244,7 @@ public class UserController {
         int totalPages = (int) Math.ceil((double) totalTransactions / pageSize);
 
         // Get transactions for the current page
-        List<TransactionDto> transactionsToShow = filteredTransactions.stream()
-                .skip(page * pageSize)
-                .limit(pageSize)
-                .collect(Collectors.toList());
+        List<TransactionDto> transactionsToShow = getTransactionsDto(page, filteredTransactions, pageSize);
 
         // Add the transactions and selected filter to the model
         model.addAttribute("transaction", transactionsToShow);

@@ -13,8 +13,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class TransactionFareDto {
 
-    private Long userId;
-
     private String startStation; // Can be NULL for top-ups
 
     private String destStation; // Can be NULL for top-ups

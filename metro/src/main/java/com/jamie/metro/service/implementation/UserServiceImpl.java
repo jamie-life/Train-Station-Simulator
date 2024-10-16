@@ -22,8 +22,8 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     private final RestTemplate restTemplate;
-    //private final String base_api_url = "https://9764172992.xyz/api/user";
-    private final String base_api_url = "http://localhost:8082/api/user";
+    private final String base_api_url = "https://9764172992.xyz/api/user";
+    //private final String base_api_url = "http://localhost:8082/api/user";
     private ModelMapper modelMapper;
     private HttpSession session;
 

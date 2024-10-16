@@ -4,7 +4,6 @@ import com.jamie.metro.dto.*;
 import com.jamie.metro.entity.Station;
 import com.jamie.metro.service.AuthenticationService;
 import com.jamie.metro.service.UserService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;

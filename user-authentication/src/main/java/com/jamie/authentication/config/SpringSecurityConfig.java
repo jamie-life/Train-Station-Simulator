@@ -62,6 +62,7 @@ public class SpringSecurityConfig {
                             Cookie cookie = new Cookie("JSESSIONID", null);
                             //cookie.setDomain("localhost");
                             cookie.setPath("/");  // Ensure the path matches the original cookie's path
+                            cookie.setDomain("8626692352.xyz");
                             cookie.setHttpOnly(true);
                             cookie.setSecure(false);
                             cookie.setMaxAge(0);  // Set max age to 0 to expire the cookie immediately

@@ -20,9 +20,8 @@ public class AuthenticationImpl implements AuthenticationService {
 
 
     private final RestTemplate restTemplate;
-    private HttpSession session;
-    //private final String base_api_url = "https://9764172992.xyz/api/auth";
-    private final String base_api_url = "http://localhost:8082/api/auth";
+    private final String base_api_url = "https://9764172992.xyz/api/auth";
+    //private final String base_api_url = "http://localhost:8082/api/auth";
     private ModelMapper modelMapper;
 
     @Override
@@ -108,7 +107,7 @@ public class AuthenticationImpl implements AuthenticationService {
     @Override
     public void logout(HttpSession session) {
         // Define the URL for your external server's logout endpoint
-        String logoutUrl = "http://localhost:8082/logout";
+        String logoutUrl = "https://9764172992.xyz/logout";
 
         try {
             // Get the JWT token from the session

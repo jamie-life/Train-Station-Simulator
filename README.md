@@ -57,9 +57,17 @@ The **User Authentication Module** is responsible for:
 
 ## Technologies Used
 
-- **Java 11+**
-- **Spring Boot**
-- **Spring Security**
-- **JWT (JSON Web Token)**
-- **Maven** (for dependency management and build)
-- **REST API**
+- **Java 17**
+- **Spring Boot 3.3.4**
+  - Spring Boot Starter Web (for building REST APIs)
+  - Spring Boot Starter Thymeleaf (for server-side templating in the Metro module)
+  - Spring Boot Starter Data JPA (for working with relational databases)
+  - Spring Boot Starter Security (for securing the User Authentication module)
+  - Spring Security Test (for testing security configurations)
+- **JWT (JSON Web Token)** (using `jjwt` for authentication in the User Authentication module)
+- **MySQL** (for database integration)
+- **ModelMapper** (for object mapping between DTOs and entities)
+- **Lombok** (for reducing boilerplate code in the project)
+- **Maven** (for project build and dependency management)
+- **Thymeleaf** (for building web interfaces in the Metro module)
+- **JUnit 5** (for unit and integration testing with `spring-boot-starter-test`)
